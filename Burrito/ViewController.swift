@@ -37,8 +37,8 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
             locationManger.delegate = self
             locationManger.desiredAccuracy = kCLLocationAccuracyBest
             locationManger.startUpdatingLocation()
-            latitude = (locationManger.location?.coordinate.latitude)!
-            longitude = (locationManger.location?.coordinate.longitude)!
+            latitude = (locationManger.location?.coordinate.latitude) as! Double
+            longitude = (locationManger.location?.coordinate.longitude) as! Double
             searchPlaceFromGoogle()
             
         }
@@ -46,6 +46,7 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
         tableV.register(BurritoCell.self, forCellReuseIdentifier: cellid)
         tableV.delegate = self
         tableV.dataSource = self
+        tableV.estimatedRowHeight = 44
         tableV.rowHeight = UITableViewAutomaticDimension
         tableV.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.0)
         tableV.estimatedRowHeight = 100
@@ -67,16 +68,18 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
         let cell = tableView.dequeueReusableCell(withIdentifier: cellid) as! BurritoCell
         /*
         cell.Burrito = places[indexPath.row]
+*/
         cell.Location.numberOfLines = 0
         cell.placeName.numberOfLines = 0
-        */
-        cell.Burrito = places?[indexPath.item]
+ 
+        cell.Burrito = places?[indexPath.section]
         //For bottom border to tv_title;
+      
         
         cell.layer.borderColor = UIColor.white.cgColor
         cell.layer.borderWidth = 1
-        cell.layer.cornerRadius = 15
-
+        cell.layer.cornerRadius = 20
+ 
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOpacity = 1
         cell.layer.shadowRadius = 10
@@ -87,14 +90,31 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
         
         return cell
     }
-    
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //print(places?.count)
-       return places?.count ?? 0
+        return 1
     }
  
+    func numberOfSections(in tableView: UITableView) -> Int {
+        
+        return places?.count ?? 0
     
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 20
+    }
+    
+    // Make the background color show through
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        
+        return headerView
+    }
+    
+        
+
  
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
@@ -102,12 +122,6 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
    
     
 
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView()
-        headerView.backgroundColor = UIColor.clear
-        
-        return headerView
-    }
 
     
 
@@ -116,7 +130,7 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
         
         let layout = UICollectionViewFlowLayout()
         let mV = MapView(collectionViewLayout: layout)
-        mV.selectedPlace = places?[indexPath.row]
+        mV.selectedPlace = places?[indexPath.section]
         navigationController?.pushViewController( mV , animated: true)
     }
    
@@ -152,6 +166,9 @@ class ViewController:UIViewController, UITableViewDataSource, UITableViewDelegat
                 }
                //
            //print("json == \(json)")
+            }
+            DispatchQueue.main.async {
+                self.tableV.reloadData()
             }
    
         }

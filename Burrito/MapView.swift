@@ -22,11 +22,12 @@ class MapView: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         
         
     }
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MapCell
         
         cell.Burrito = selectedPlace
-        
+        cell.Loc.numberOfLines = 0
         cell.layer.cornerRadius = 12
         
         return cell
